@@ -7,10 +7,6 @@ class RegionsController extends AppController
 
     public $uses = array(
         'Region',
-        'Country',
-        'ObjectType',
-        'Topic',
-        'Category'
     );
     public $components = array(
         'FileCommon',
@@ -21,9 +17,9 @@ class RegionsController extends AppController
     {
         parent::beforeFilter();
         // nếu không có quyền truy cập, thì buộc user phải đăng xuất
-        if (!$this->isAllow()) {
-            return $this->redirect($this->Auth->loginRedirect);
-        }
+//        if (!$this->isAllow()) {
+//            return $this->redirect($this->Auth->loginRedirect);
+//        }
         $this->setInit();
     }
 
@@ -192,10 +188,10 @@ class RegionsController extends AppController
     {
         $this->set('model_name', $this->modelClass);
         $this->set('status', Configure::read('sysconfig.App.status'));
-        $this->set('listCountry', $this->Country->getListCountryCode());
+//        $this->set('listCountry', $this->Country->getListCountryCode());
         $this->set('objectTypeId', $this->object_type_id);
-        $this->set('categories', $this->Category->getListName($this->object_type_id));
-        $this->set('topics', $this->Topic->getListTopicActived());
+//        $this->set('categories', $this->Category->getListName($this->object_type_id));
+//        $this->set('topics', $this->Topic->getListTopicActived());
     }
 
     private function saveNewData()
