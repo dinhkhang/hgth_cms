@@ -4455,3 +4455,9 @@ msgstr "Báo cáo tỷ lệ charge cước"
 msgid "daily_kpi_interaction_mt_title"
 msgstr "Báo cáo tỷ lệ gửi mt"
 # /DailyKpiInteraction/mt - END
+
+msgid "regions"
+msgstr "Vùng miền"
+
+msgid "regions_list"
+msgstr "Danh sách vùng miền"
