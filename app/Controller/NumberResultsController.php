@@ -4,7 +4,7 @@ class NumberResultsController extends AppController
 {
     const FORM_MIEN_BAC = 0;
     const FORM_TRUNG_NAM = 1;
-    public $SPECIAL_REGION;
+    public $specialRegion;
     public $uses = array('NumberResult', 'Region');
     private $datas;
 
@@ -17,7 +17,7 @@ class NumberResultsController extends AppController
         if ($region) {
             $this->request->data[$this->modelClass . '.region'] = $region;
         } else {
-            $this->request->data[$this->modelClass . '.region'] = $this->SPECIAL_REGION;
+            $this->request->data[$this->modelClass . '.region'] = $this->specialRegion;
         }
 
         if ($region) {
@@ -29,7 +29,7 @@ class NumberResultsController extends AppController
             ));
             $this->set('data', $this->datas);
 
-            if ($this->request->data[$this->modelClass . '.region'] == $this->SPECIAL_REGION) {
+            if ($this->request->data[$this->modelClass . '.region'] == $this->specialRegion) {
                 $this->set('showType', $this->__buildForm($region, self::FORM_MIEN_BAC));
             } else {
                 $this->set('showType', $this->__buildForm($region, self::FORM_TRUNG_NAM));
@@ -47,7 +47,7 @@ class NumberResultsController extends AppController
         $this->set('get', Router::url(array('controller' => $this->name, 'action' => 'getData'), true));
         $this->set('save', Router::url(array('controller' => $this->name, 'action' => 'saveData'), true));
 
-        $this->SPECIAL_REGION = Configure::read('sysconfig.special_region');
+        $this->specialRegion = Configure::read('sysconfig.special_region');
     }
 
     public function getData($region = null)
