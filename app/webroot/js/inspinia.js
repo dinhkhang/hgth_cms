@@ -52,7 +52,7 @@ $(document).ready(function () {
 
         $(".js-example-tags").select2({
                 tags: true,
-                minimumInputLength: 3
+                minimumInputLength: 2
         });
 
         // Append config box / Only for demo purpose
