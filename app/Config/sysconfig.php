@@ -702,6 +702,11 @@ $config['sysconfig'] = array(
     'play_status_clss' => array(
         0 => 'label label-danger',
         1 => 'label label-primary',
+    ),
+    'special_region' => 'thu-do',
+    'total_result_prize' => array(
+        'thu-do' => 27,
+        'other' => 18
     )
 );
 
