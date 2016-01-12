@@ -4461,3 +4461,12 @@ msgstr "Vùng miền"
 
 msgid "regions_list"
 msgstr "Danh sách vùng miền"
+
+# /NumberResults/add - BEGIN
+msgid "sure"
+msgstr "Bạn có chắc chắn"
+
+msgid "leng_not_valid"
+msgstr "chưa đạt độ dài quy định. Vui lòng nhập số có độ dài"
+# /NumberResults/add - END
+

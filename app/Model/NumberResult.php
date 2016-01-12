@@ -5,6 +5,68 @@ App::uses('DateResult', 'Model');
 class NumberResult extends AppModel
 {
     public $useTable = 'number_results';
+    private $validateMienBac = array(
+        0 => 5, 1 => 5, 2 => 5, 3 => 5, 4 => 4, 5 => 4, 6 => 3, 7 => 2
+    );
+    private $validateTrungNam = array(
+        0 => 6, 1 => 5, 2 => 5, 3 => 5, 4 => 5, 5 => 4, 6 => 4, 7 => 3, 8 => 2
+    );
+
+    public $validate = array(
+        'number' => array(
+            'numeric' => array(
+                'rule' => 'numeric',
+                'required' => true,
+                'message' => 'Please supply the number of prize.'
+            ),
+            'between' => array(
+                'rule' => array('lengthBetween', 2, 6),
+                'required' => true,
+                'message' => 'Between 2 to 6 characters'
+            ),
+           'checkByPrize' => array(
+                "rule" => array("checkByPrize"),
+               'required' => true,
+                "message" => "Value is not valid."
+           ),
+        ),
+        'loto' => array(
+            'numeric' => array(
+                'rule' => 'numeric',
+                'required' => true,
+                'message' => 'Please supply the number of prize.'
+            ),
+            'between' => array(
+                'rule' => array('lengthBetween', 2, 2),
+                'required' => true,
+                'message' => 'Between 2 to 2 characters'
+            )
+        ),
+        'first_loto' => array(
+            'numeric' => array(
+                'rule' => 'numeric',
+                'required' => true,
+                'message' => 'Please supply the number of prize.'
+            ),
+            'between' => array(
+                'rule' => array('lengthBetween', 1, 1),
+                'required' => true,
+                'message' => 'Between 1 to 1 characters'
+            )
+        ),
+        'last_loto' => array(
+            'numeric' => array(
+                'rule' => 'numeric',
+                'required' => true,
+                'message' => 'Please supply the number of prize.'
+            ),
+            'between' => array(
+                'rule' => array('lengthBetween', 1, 1),
+                'required' => true,
+                'message' => 'Between 1 to 1 characters'
+            )
+        ),
+    );
 
     public function beforeSave($options = array())
     {
@@ -17,6 +79,14 @@ class NumberResult extends AppModel
         }
     }
 
+    public function checkByPrize() {
+        $type = isset($this->data[$this->alias]['type']) ? $this->data[$this->alias]['type'] : '';
+        $region_code = isset($this->data[$this->alias]['region_code']) ? $this->data[$this->alias]['region_code'] : '';
+        $data_compate = ($region_code == Configure::read('sysconfig.special_region'))
+                      ? $this->validateMienBac
+                      : $this->validateTrungNam;
+        return strlen($this->data[$this->alias]['number']) == $data_compate[$type];
+    }
 
     public function afterSave($created, $options = array())
     {

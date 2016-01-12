@@ -1,26 +1,37 @@
 <?php
 echo $this->element('js/datepicker');
+echo $this->Html->script('plugins/alphanum/jquery.alphanum');
 ?>
 
 <script>
     $(document).ready(function () {
-        var region = $('#region option:selected');
+        // only allow input numberic
+        $('input.number-prize').numeric({
+            allowPlus           : false, // Allow the + sign
+            allowMinus          : false,  // Allow the - sign
+            allowThouSep        : false,  // Allow the thousands separator, default is the comma eg 12,000
+            allowDecSep         : false,  // Allow the decimal separator, default is the fullstop eg 3.141
+            allowLeadingSpaces  : false
+        });
 
+        // redirect by region
+        var region = $('#region option:selected');
         $('#show-region').text(region.text().toUpperCase());
         $('#region').change(function () {
             console.log("<?php echo $root; ?>" + '/' + $('#region').val());
             window.location = "<?php echo $root; ?>" + '/' + $('#region').val();
         });
 
+        // save data
         $('.number-prize').change(function () { //use clicks message send button
             var main_data = $(this)
             var max_length = main_data.attr('maxlength');
             if(max_length != main_data.val().length) {
-                alert(main_data.val() + ': chưa đủ độ dài. Vui lòng nhập số có ' + max_length + ' chữ số!');
+                alert(main_data.val() + ': <?php echo __('leng_not_valid'); ?>: ' + max_length);
                 main_data.closest('div').addClass('has-error');
                return;
             }
-            if(confirm('Bạn có chắc: ' + main_data.val())) {
+            if(confirm('<?php echo __('sure'); ?>: ' + main_data.val())) {
                 var data = $(this).closest('form').serializeArray();
                 $.ajax({
                     type: "POST",
@@ -28,8 +39,8 @@ echo $this->element('js/datepicker');
                     dataType: "JSON",
                     url: "<?php echo $save; ?>" + '/' + region.val(),
                     success: function (data) {
+                        main_data.closest('div').removeClass('has-error');
                         main_data.closest('div').addClass(data.class);
-                        // update id
                         main_data.closest('div').find('.mongo-id').val(data.id);
                     }
                 });
