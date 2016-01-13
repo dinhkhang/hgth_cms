@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class NumberResultsController
+ */
 class NumberResultsController extends AppController
 {
     const FORM_MIEN_BAC = 0;
@@ -7,80 +10,60 @@ class NumberResultsController extends AppController
     public $specialRegion;
     public $uses = array('NumberResult', 'Region');
     private $datas;
+    private $list_region;
 
-    public function add($region = null)
+    /**
+     * @param string $region
+     * @param string $date
+     */
+    public function add($region = null, $date = null)
     {
         $this->setInit();
         $this->set(compact('region'));
 
-        // set default value
-        if ($region) {
-            $this->request->data[$this->modelClass . '.region'] = $region;
-        } else {
-            $this->request->data[$this->modelClass . '.region'] = $this->specialRegion;
-        }
-
-        if ($region) {
+        $this->request->data = array($this->modelClass => array(
+            'date' => $date ?: date('d-m-Y'),
+            'region_code' => $region
+        ));
+        if ($region && array_key_exists($region, $this->list_region) && $date && strtotime($date)) {
             $this->datas = $this->{$this->modelClass}->find('all', array(
                 'conditions' => array(
-                    'date' => (int) date('Ymd'),
+                    'date' => (int)date('Ymd', strtotime($date)),
                     'region_code' => $region,
                 )
             ));
             $this->set('data', $this->datas);
 
-            if ($this->request->data[$this->modelClass . '.region'] == $this->specialRegion) {
+            if ($region == $this->specialRegion) {
                 $this->set('showType', $this->__buildForm($region, self::FORM_MIEN_BAC));
             } else {
                 $this->set('showType', $this->__buildForm($region, self::FORM_TRUNG_NAM));
             }
         }
-        $this->set('data2', $this->data);
     }
 
+    /**
+     * Init
+     */
     protected function setInit()
     {
         $this->set('model_name', $this->modelClass);
-        $this->set('listRegion', $this->Region->find('list', array('fields' => array('code', 'name'))));
+        $this->list_region = $this->Region->find('list', array(
+            'fields' => array('code', 'name'),
+            'conditions' => array('parent' => array('$ne' => null)),
+        ));
+        $this->set('listRegion', $this->list_region);
 
         $this->set('root', Router::url(array('controller' => $this->name, 'action' => 'add'), true));
-        $this->set('get', Router::url(array('controller' => $this->name, 'action' => 'getData'), true));
         $this->set('save', Router::url(array('controller' => $this->name, 'action' => 'saveData'), true));
 
         $this->specialRegion = Configure::read('sysconfig.special_region');
     }
 
-    public function getData($region = null)
-    {
-        // lấy dữ liệu
-        if ($this->request->is('ajax') && $this->request->is('get')) {
-            $data = $this->DateResult->find('first', array('conditions' => array(
-                'region_code' => $region,
-                'date' => (int)date('Ymd')
-            )));
-
-            $format_data = array();
-            foreach ($data['DateResult']['numbers'] AS $key => $prize) {
-                if (is_array($prize)) {
-                    foreach ($prize AS $k => $one) {
-                        $format_data[$key . $k] = $one;
-                    }
-                } else {
-                    $format_data[$key . '0'] = $prize;
-                }
-            }
-            $result = array(
-                'data' => $format_data,
-                'conditions' => array(
-                    'region_code' => $region,
-                    'date' => date('Ymd')
-                )
-            );
-            echo json_encode($result);
-        }
-        $this->autoLayout = $this->autoRender = false;
-    }
-
+    /**
+     * @param string $region
+     * @param string $date
+     */
     public function saveData($region = null, $date = null)
     {
         if ($this->request->is('post')) {
@@ -102,14 +85,24 @@ class NumberResultsController extends AppController
         $this->autoLayout = $this->autoRender = false;
     }
 
+    /**
+     * Get lotos from numbers
+     */
     protected function _getLoto()
     {
-        $loto = substr($this->request->data($this->modelClass . '.number'), -2);
-        $this->request->data[$this->modelClass]['loto'] = $loto;
-        $this->request->data[$this->modelClass]['first_loto'] = (int)substr($loto, 0, 1);
-        $this->request->data[$this->modelClass]['last_loto'] = (int)substr($loto, -1, 1);
+        if($this->request->data($this->modelClass . '.number')) {
+            $loto = substr($this->request->data($this->modelClass . '.number'), -2);
+            $this->request->data[$this->modelClass]['loto'] = $loto;
+            $this->request->data[$this->modelClass]['first_loto'] = (int)substr($loto, 0, 1);
+            $this->request->data[$this->modelClass]['last_loto'] = (int)substr($loto, -1, 1);
+        }
     }
 
+    /**
+     * get value for view form
+     * @param $type
+     * @return array
+     */
     private function __fetchValue($type)
     {
         $result = array();
@@ -124,6 +117,12 @@ class NumberResultsController extends AppController
         return $result;
     }
 
+    /**
+     * build view form
+     * @param $region
+     * @param $form
+     * @return array
+     */
     private function __buildForm($region, $form)
     {
         switch ($form) {

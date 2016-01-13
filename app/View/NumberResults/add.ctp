@@ -15,11 +15,14 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
         });
 
         // redirect by region
-        var region = $('#region option:selected');
-        $('#show-region').text(region.text().toUpperCase());
-        $('#region').change(function () {
-            console.log("<?php echo $root; ?>" + '/' + $('#region').val());
-            window.location = "<?php echo $root; ?>" + '/' + $('#region').val();
+        $('#show-region').text($('#region option:selected').text().toUpperCase());
+
+        var region = $('#region');
+        var date = $('#date');
+        $('#region, #date').change(function () {
+            if(region.val() && date.val()) {
+                window.location = "<?php echo $root; ?>" + '/' + region.val() + '/' + date.val();
+            }
         });
 
         // save data
@@ -46,6 +49,13 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
                 });
             }
         });
+
+        // datepicker
+        $('.datepicker').datepicker({
+            format: 'dd-mm-yyyy',
+            autoclose: true
+        });
+
     });
 </script>
 <style>
@@ -70,7 +80,7 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
                         class="col-sm-2 control-label"><?php echo __('region_name') ?><?php echo $this->element('required') ?></label>
                     <div class="col-sm-10">
                         <?php
-                        echo $this->Form->input($model_name . '.region', array(
+                        echo $this->Form->input($model_name . '.region_code', array(
                             'id' => 'region',
                             'class' => 'form-control',
                             'div' => false,
@@ -78,9 +88,30 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
                             'required' => true,
                             'options' => $listRegion,
                             'empty' => '-------',
-                            'default' => $this->request->data[$model_name . '.region'],
                         ));
                         ?>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+
+
+                <div class="form-group">
+                    <label
+                        class="col-sm-2 control-label"><?php echo __('event_date') ?><?php echo $this->element('required') ?></label>
+                    <div class="col-sm-10">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <?php
+                            echo $this->Form->input($model_name . '.date', array(
+                                'id' => 'date',
+                                'class' => 'form-control datepicker',
+                                'maxlength' => 10,
+                                'div' => false,
+                                'label' => false,
+                                'required' => true,
+                            ));
+                            ?>
+                        </div>
                     </div>
                 </div>
                 <div class="hr-line-dashed"></div>
@@ -95,7 +126,7 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
                                 <p>
                                 <h2 id="show-region">TỈNH/THÀNH PHỐ</h2></p>
                                 <p>
-                                <h3 id="show-date"><?php echo date('d-m-Y'); ?></h3></p>
+                                <h3 id="show-date"><?php echo $this->Form->value($model_name . '.date'); ?></h3></p>
                             </td>
                         </tr>
                         <?php foreach ($showType AS $key => $prize) : ?>
