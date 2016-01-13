@@ -18,6 +18,15 @@ class NumberResultsController extends AppController
      */
     public function add($region = null, $date = null)
     {
+        $this->set([
+            'breadcrumb' => [
+                array(
+                    'url'   => Router::url(array('action' => __FUNCTION__)),
+                    'label' => __('number_result_add_title'),
+                )
+            ],
+            'page_title' => __('number_result_title')
+        ]);
         $this->setInit();
         $this->set(compact('region'));
 

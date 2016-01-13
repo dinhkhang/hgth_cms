@@ -4463,6 +4463,12 @@ msgid "regions_list"
 msgstr "Danh sách vùng miền"
 
 # /NumberResults/add - BEGIN
+msgid "number_result_title"
+msgstr "Kết quả xổ số"
+
+msgid "number_result_add_title"
+msgstr "Nhập kết quả xổ số"
+
 msgid "sure"
 msgstr "Bạn có chắc chắn"
 
