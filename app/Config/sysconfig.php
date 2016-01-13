@@ -707,6 +707,9 @@ $config['sysconfig'] = array(
     'total_result_prize' => array(
         'thu-do' => 27,
         'other' => 18
+    ),
+    'amplitudesOblique' => array( // Biên độ thống kê xiên
+        5, 10, 15
     )
 );
 
