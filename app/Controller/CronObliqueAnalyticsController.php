@@ -46,6 +46,14 @@ class CronObliqueAnalyticsController extends AppController {
 
                 $results = $oblique->getResult();
 
+                // Delete all old record
+                $this->XienNumberLuck->deleteAll(array(
+                    'date' => (int)date('Ymd'),
+                    'region_code' => $region,
+                    'type' => $oblique->getType(),
+                    'span' => $oblique->getAmplitudes()
+                ));
+
                 foreach ($results as $pair => $dayOfPair) {
                     $pair = explode('_', $pair);
                     arsort($dayOfPair);
@@ -59,17 +67,7 @@ class CronObliqueAnalyticsController extends AppController {
                         'lucky_dates' => $dayOfPair
                     );
 
-                    // check exists
-                    $checkExists = $this->XienNumberLuck->find('first', array(
-                        'conditions' => $xienNumberData
-                    ));
-
-                    if ($checkExists) {
-                        $this->XienNumberLuck->id = $checkExists['XienNumberLuck']['id'];
-                    } else {
-                        $this->XienNumberLuck->create();
-                    }
-
+                    $this->XienNumberLuck->create();
                     $this->XienNumberLuck->save($xienNumberData);
                 }
             }
