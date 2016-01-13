@@ -22,7 +22,9 @@ class CronObliqueAnalyticsController extends AppController {
         $this->Auth->allow();
     }
 
-
+    /**
+     * Crontab XIEN analytics
+     */
     public function run()
     {
         $this->layout = false;
