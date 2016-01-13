@@ -8,11 +8,12 @@ App::import('Service', 'ObliqueAnalytics');
  * Time: 13:50
  * @property mixed Region
  * @property mixed XienNumberLuck
+ * @property mixed XienDateLuck
  */
 
 class CronObliqueAnalyticsController extends AppController {
 
-    public $uses = array('Region', 'XienNumberLuck');
+    public $uses = array('Region', 'XienNumberLuck', 'XienDateLuck');
 
     public function beforeFilter()
     {
@@ -37,8 +38,12 @@ class CronObliqueAnalyticsController extends AppController {
             'fields' => 'code'
         ));
 
-        foreach ($amplitudes as $amplitude) {
-            foreach ($regions as $region) {
+        foreach ($regions as $region) {
+            $xienDateLuck = array(
+                'date' => (int)date('Ymd'),
+                'region_code' => $region,
+            );
+            foreach ($amplitudes as $amplitude) {
                 $oblique = new ObliqueAnalytics();
                 $oblique->setAmplitudes($amplitude)
                         ->setRegion($region)
@@ -46,17 +51,22 @@ class CronObliqueAnalyticsController extends AppController {
 
                 $results = $oblique->getResult();
 
+                $xienDateLuck['type'] = $oblique->getType();
+                $xienDateLuck['numbers'][$amplitude] = array();
+
                 // Delete all old record
                 $this->XienNumberLuck->deleteAll(array(
                     'date' => (int)date('Ymd'),
                     'region_code' => $region,
                     'type' => $oblique->getType(),
-                    'span' => $oblique->getAmplitudes()
+                    'span' => $amplitude
                 ));
 
                 foreach ($results as $pair => $dayOfPair) {
                     $pair = explode('_', $pair);
                     arsort($dayOfPair);
+
+                    $xienDateLuck['numbers'][$amplitude][] = $pair;
 
                     $xienNumberData = array(
                         'date' => (int)date('Ymd'),
@@ -71,6 +81,24 @@ class CronObliqueAnalyticsController extends AppController {
                     $this->XienNumberLuck->save($xienNumberData);
                 }
             }
+
+            // Save to xien_date_lucks collection
+            krsort($xienDateLuck['numbers']);
+
+            $xienDateLuckExists = $this->XienDateLuck->find('first', array(
+                'conditions' => array(
+                    'date' => (int)date('Ymd'),
+                    'region_code' => $region,
+                    'type' => $xienDateLuck['type']
+                )
+            ));
+
+            if ($xienDateLuckExists) {
+                $this->XienDateLuck->id = $xienDateLuckExists['XienDateLuck']['id'];
+            } else {
+                $this->XienDateLuck->create();
+            }
+            $this->XienDateLuck->save($xienDateLuck);
         }
 
         $this->logAnyFile(sprintf('CRON END: %s', date('Y-m-d H:i:s')), __CLASS__.'_'.__FUNCTION__);
