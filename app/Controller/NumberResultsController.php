@@ -28,7 +28,7 @@ class NumberResultsController extends AppController
             'page_title' => __('number_result_title')
         ]);
         $this->setInit();
-        $this->set(compact('region'));
+        $this->set(compact('region', 'date'));
 
         $this->request->data = array($this->modelClass => array(
             'date' => $date ?: date('d-m-Y'),

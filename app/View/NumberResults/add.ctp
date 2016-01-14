@@ -21,6 +21,7 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
         var date = $('#date');
         $('#region, #date').change(function () {
             if(region.val() && date.val()) {
+                $('#table-form').hide();
                 window.location = "<?php echo $root; ?>" + '/' + region.val() + '/' + date.val();
             }
         });
@@ -118,7 +119,7 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
 
 
                 <?php if (isset($showType)) : ?>
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover" id="table-form">
                         <tr class="text-center">
                             <td colspan="2">
                                 <p>
