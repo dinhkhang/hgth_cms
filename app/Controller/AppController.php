@@ -1445,7 +1445,10 @@ class AppController extends Controller {
         }
     }
 
-    protected function get_year_report()
+    /**
+    * @author Ungnv
+    */
+    protected function getYearReport()
     {
         if( isset($this->request->query['year']) ){
             return $this->request->query['year'];
@@ -1454,7 +1457,10 @@ class AppController extends Controller {
         }
     }
 
-    protected function get_month_report()
+    /**
+    * @author Ungnv
+    */
+    protected function getMonthReport()
     {
         if( isset($this->request->query['month']) ){
             return $this->request->query['month'];
@@ -1463,7 +1469,10 @@ class AppController extends Controller {
         }
     }
 
-    protected function get_day_report()
+    /**
+    * @author Ungnv
+    */
+    protected function getDayReport()
     {
         if( isset($this->request->query['day']) ){
             return $this->request->query['day'];
@@ -1471,6 +1480,57 @@ class AppController extends Controller {
             return date('d');
         }
     }
+
+    /**
+    * Chuyển mảng nhiều chiều thành 1 chiều
+    * @author Ungnv
+    * @param $array
+    */
+    protected function arrayFlatten($array) { 
+        if (!is_array($array)) { 
+            return FALSE; 
+        } 
+        $result = array(); 
+        foreach ($array as $key => $value) { 
+            if (is_array($value)) { 
+                $result = array_merge($result, $this->arrayFlatten($value)); 
+            } 
+            else { 
+                $result[$key] = $value; 
+            } 
+        } 
+        return $result; 
+    }
+
+    /**
+    * @author: Ungnv
+    * @param: mảng 27 số của bộ kết quả 1 ngày
+    * @return: phân tách ra từng chữ số, trả về mảng gồm 107 phần tử
+    */
+    protected function parseResult($result)
+    {
+        $returnArray = array();
+        if(!empty($result)){
+            foreach ($result as $item) {
+                $itemToArray = array_map('intval', str_split($item));
+                $returnArray = array_merge($returnArray, $itemToArray);
+            }
+        }
+        return $returnArray;
+    }
+
+    function getAllLoto($result){
+        $lotoArray = array();
+        if(!empty($result)){
+            foreach ($result as $item) {
+                $itemToArray = substr($item,-2);
+                $lotoArray[] = $itemToArray;
+            }
+        }
+        //$lotoArray = array_values(array_unique($lotoArray));
+        return array_values($lotoArray);
+    }
+
 
     protected function checkDate($date) {
         $d = DateTime::createFromFormat('d-m-Y', $date);
