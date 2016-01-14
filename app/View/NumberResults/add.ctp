@@ -41,7 +41,7 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
                     type: "POST",
                     data: data,
                     dataType: "JSON",
-                    url: "<?php echo $save; ?>" + '/' + region.val(),
+                    url: "<?php echo $save; ?>" + '/' + region.val() + '/' + date.val(),
                     success: function (data) {
                         main_data.closest('div').removeClass('has-error');
                         main_data.closest('div').addClass(data.class);
@@ -62,6 +62,9 @@ echo $this->Html->script('plugins/alphanum/jquery.alphanum');
 <style>
     .number-prize {
         text-align: center;
+    }
+    form {
+        margin: 4px auto;
     }
 </style>
 
